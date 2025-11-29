@@ -2,21 +2,44 @@ import 'package:flutter/material.dart';
 import '../models/project.dart';
 import '../data/mock_data.dart';
 
-class ProjectDetailScreen extends StatelessWidget {
+class ProjectDetailScreen extends StatefulWidget {
   const ProjectDetailScreen({super.key});
 
   @override
+  State<ProjectDetailScreen> createState() => _ProjectDetailScreenState();
+}
+
+class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
+  @override
   Widget build(BuildContext context) {
     final project = ModalRoute.of(context)!.settings.arguments as Project;
-    final specs = MockData.getSpecsForProject(project.id);
+    // Get fresh data in case it was edited
+    final freshProject = MockData.projects.firstWhere(
+      (p) => p.id == project.id, 
+      orElse: () => project
+    );
+    final specs = MockData.getSpecsForProject(freshProject.id);
 
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(project.name),
+          title: Text(freshProject.name),
           backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () async {
+                await Navigator.pushNamed(
+                  context, 
+                  '/project_edit', 
+                  arguments: freshProject
+                );
+                setState(() {}); // Refresh after edit
+              },
+            ),
+          ],
           bottom: const TabBar(
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
@@ -30,9 +53,9 @@ class ProjectDetailScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            _buildOverviewTab(context, project),
+            _buildOverviewTab(context, freshProject),
             _buildSpecsTab(context, specs),
-            _buildTimelineTab(context, project),
+            _buildTimelineTab(context, freshProject),
           ],
         ),
       ),
@@ -69,7 +92,22 @@ class ProjectDetailScreen extends StatelessWidget {
 
   Widget _buildSpecsTab(BuildContext context, List<Specification> specs) {
     if (specs.isEmpty) {
-      return const Center(child: Text('No specifications defined yet.'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('No specifications defined yet.'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // TODO: Implement add spec
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add Spec feature coming next')));
+              },
+              child: const Text('Add Specification'),
+            ),
+          ],
+        ),
+      );
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16),

@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
 import '../models/project.dart';
 
-class ProjectListScreen extends StatelessWidget {
+class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
 
+  @override
+  State<ProjectListScreen> createState() => _ProjectListScreenState();
+}
+
+class _ProjectListScreenState extends State<ProjectListScreen> {
   @override
   Widget build(BuildContext context) {
     final projects = MockData.projects;
@@ -51,16 +56,25 @@ class ProjectListScreen extends StatelessWidget {
                 ],
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                Navigator.pushNamed(
+              onTap: () async {
+                await Navigator.pushNamed(
                   context,
                   '/project_detail',
                   arguments: project,
                 );
+                setState(() {}); // Refresh list on return
               },
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.pushNamed(context, '/project_edit');
+          setState(() {}); // Refresh list on return
+        },
+        backgroundColor: Colors.indigo,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

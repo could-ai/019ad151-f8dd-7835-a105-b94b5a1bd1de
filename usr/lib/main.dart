@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/project_list_screen.dart';
 import 'screens/project_detail_screen.dart';
+import 'screens/project_edit_screen.dart';
 
 void main() {
   runApp(const RFICManagerApp());
@@ -36,6 +37,7 @@ class RFICManagerApp extends StatelessWidget {
         '/': (context) => const DashboardScreen(),
         '/projects': (context) => const ProjectListScreen(),
         '/project_detail': (context) => const ProjectDetailScreen(),
+        '/project_edit': (context) => const ProjectEditScreen(),
       },
     );
   }

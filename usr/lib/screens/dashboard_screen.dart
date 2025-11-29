@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
 import '../models/project.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
   Widget build(BuildContext context) {
+    // Re-fetch data on build to show updates after returning from other screens
     final projects = MockData.projects;
     final activeProjects = projects.where((p) => p.status != 'Tape-out').length;
     final upcomingTapeouts = projects.where((p) => p.tapeOutDate.difference(DateTime.now()).inDays < 60 && p.tapeOutDate.isAfter(DateTime.now())).length;
@@ -59,7 +65,7 @@ class DashboardScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/projects');
+                  Navigator.pushNamed(context, '/projects').then((_) => setState(() {}));
                 },
                 icon: const Icon(Icons.list),
                 label: const Text('View All Projects'),
@@ -75,8 +81,7 @@ class DashboardScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Implement create project
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Create Project feature coming soon')));
+          Navigator.pushNamed(context, '/project_edit').then((_) => setState(() {}));
         },
         backgroundColor: Colors.indigo,
         child: const Icon(Icons.add, color: Colors.white),
